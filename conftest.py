@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import os
 import re
 
 import pytest
@@ -52,15 +51,3 @@ def faker() -> Faker:
     fake = Faker()
     Faker.seed(FAKER_SEED)
     return fake
-
-
-@pytest.fixture
-def automation_exercise_email() -> str:
-    """Optional saved account email for tests that need an existing login."""
-    return os.environ.get("AUTOMATION_EXERCISE_EMAIL", "").strip()
-
-
-@pytest.fixture
-def automation_exercise_password() -> str:
-    """Optional saved account password for tests that need an existing login."""
-    return os.environ.get("AUTOMATION_EXERCISE_PASSWORD", "").strip()
