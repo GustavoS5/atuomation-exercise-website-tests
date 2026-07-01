@@ -13,9 +13,11 @@ from pages.home_page import HomePage
 from pages.product_detail_page import ProductDetailPage
 from pages.products_page import ProductsPage
 from pages.signup_login_page import SignupLoginPage
+from pages.test_cases_page import TestCasesPage
 from playwright.sync_api import APIRequestContext, Page, Playwright
 
 from tests.api.api_models import AccountPayload
+from tests.helpers import AccountData, make_account_data
 
 API_BASE_URL = "https://automationexercise.com"
 
@@ -71,6 +73,31 @@ def contact_us_page(page: Page) -> ContactUsPage:
     contact_us = ContactUsPage(page)
     contact_us.load()
     return contact_us
+
+
+@pytest.fixture
+def test_cases_page(page: Page) -> TestCasesPage:
+    """A TestCasesPage object already loaded in the browser."""
+    test_cases = TestCasesPage(page)
+    test_cases.load()
+    return test_cases
+
+
+@pytest.fixture
+def ui_account(
+    api_context: APIRequestContext,
+    faker: Faker,
+) -> Iterator[AccountData]:
+    """Generate UI account data and clean it up through the API after the test."""
+    account = make_account_data(faker)
+    yield account
+    api_context.delete(
+        "/api/deleteAccount",
+        form={
+            "email": account.email,
+            "password": account.password,
+        },
+    )
 
 
 # --------------------------------------------------------------------------- #
