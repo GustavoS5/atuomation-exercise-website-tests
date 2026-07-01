@@ -32,7 +32,7 @@ uv run pytest -m api
 uv run pytest -m "e2e and not api"
 
 # Run specific modules
-uv run pytest tests/test_api.py
+uv run pytest tests/api/test_api.py
 uv run pytest tests/test_products.py
 
 # Debug locally with a visible browser
@@ -48,7 +48,7 @@ uv run mypy pages tests conftest.py
 
 The API test suite covers all 14 endpoints documented on the
 [API list page](https://automationexercise.com/api_list). Responses are
-validated against Pydantic models defined in `tests/api_models.py`.
+validated against Pydantic models defined in `tests/api/api_models.py`.
 
 > Note: the Automation Exercise API always responds with HTTP 200 and carries
 > the real status in the JSON body's `responseCode` field; tests assert on that
@@ -56,7 +56,7 @@ validated against Pydantic models defined in `tests/api_models.py`.
 
 ```powershell
 uv run pytest -m api            # run only the API tests
-uv run pytest tests/test_api.py # run the API test module directly
+uv run pytest tests/api/test_api.py # run the API test module directly
 ```
 
 Account-mutating tests (create/update/delete/login) self-clean up via the
@@ -79,4 +79,4 @@ The GitHub Actions workflow in `.github/workflows/tests.yml` runs the same check
 - `pages/`: page objects and reusable UI components
 - `tests/`: pytest test modules and test-level fixtures
 - `conftest.py`: project-wide fixtures and environment loading
-- `tests/api_models.py`: Pydantic contracts for API responses and account payloads
+- `tests/api/api_models.py`: Pydantic contracts for API responses and account payloads
