@@ -19,7 +19,7 @@ from playwright.sync_api import Page, expect
 
 @dataclass(frozen=True)
 class AccountData:
-    """Generated account details for account-based scenarios."""
+    """Account details for account-based scenarios."""
 
     name: str
     email: str
@@ -42,11 +42,11 @@ def make_account_data(faker: Faker) -> AccountData:
     last_name = faker.last_name()
     return AccountData(
         name=f"{first_name} {last_name}",
-        email=f"codex-{uuid4().hex}@example.com",
+        email=f"testuser-{uuid4().hex}@example.com",
         password=f"Pwd-{uuid4().hex}!",
         first_name=first_name,
         last_name=last_name,
-        company="OpenAI",
+        company="Example Corp",
         address1="1 Test Street",
         address2="Suite 2",
         country="United States",
