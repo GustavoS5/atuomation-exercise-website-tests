@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from pathlib import Path
+
 import pytest
 from faker import Faker
 from pages.contact_us_page import ContactUsPage
@@ -12,7 +14,7 @@ from playwright.sync_api import expect
 def test_contact_form_submits_successfully(
     contact_us_page: ContactUsPage,
     faker: Faker,
-    tmp_path,
+    tmp_path: Path,
 ) -> None:
     """The contact form accepts details and an uploaded attachment."""
     upload_file = tmp_path / "contact-message.txt"
