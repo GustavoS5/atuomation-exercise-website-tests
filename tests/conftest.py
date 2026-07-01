@@ -15,7 +15,7 @@ from pages.products_page import ProductsPage
 from pages.signup_login_page import SignupLoginPage
 from playwright.sync_api import APIRequestContext, Page, Playwright
 
-from tests.api_models import AccountPayload
+from tests.api.api_models import AccountPayload
 
 API_BASE_URL = "https://automationexercise.com"
 
