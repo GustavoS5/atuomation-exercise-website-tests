@@ -1,0 +1,50 @@
+name: Locust smoke
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  locust-smoke:
+    name: Read-only API load smoke
+    runs-on: ubuntu-latest
+    env:
+      LOCUST_USE_SHAPE: "0"
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v6
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v7
+        with:
+          enable-cache: true
+
+      - name: Install dependencies
+        run: uv sync --dev
+
+      - name: Run read-only Locust smoke
+        run: |
+          uv run locust -f performance/locustfile.py AutomationExerciseApiUser \
+            -H https://automationexercise.com \
+            --headless \
+            --users 1 \
+            --spawn-rate 1 \
+            --run-time 30s \
+            --csv reports/locust/ci_api_smoke \
+            --html reports/locust/ci_api_smoke.html
+
+      - name: Upload Locust report artifacts
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: locust-smoke-report
+          path: reports/locust/
+          if-no-files-found: ignore
