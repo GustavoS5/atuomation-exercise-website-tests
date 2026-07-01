@@ -19,9 +19,9 @@ class CartModal:
             "button", name="Continue Shopping"
         )
 
-    def wait_until_visible(self) -> None:
+    def wait_until_visible(self, *, timeout: float | None = None) -> None:
         """Wait until the modal is visible after adding a product."""
-        self.modal.wait_for(state="visible")
+        self.modal.wait_for(state="visible", timeout=timeout)
 
     def view_cart(self) -> None:
         """Open the cart from the confirmation modal."""
