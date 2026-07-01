@@ -53,3 +53,8 @@ class ContactUsPage(BasePage):
     def submit(self) -> None:
         """Submit the contact form."""
         self.submit_button.click()
+
+    def submit_and_accept_dialog(self) -> None:
+        """Submit the contact form and accept the browser confirmation dialog."""
+        self.page.once("dialog", lambda dialog: dialog.accept())
+        self.submit()
