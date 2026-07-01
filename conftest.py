@@ -5,11 +5,8 @@ from __future__ import annotations
 import re
 
 import pytest
-from dotenv import load_dotenv
 from faker import Faker
 from playwright.sync_api import BrowserContext, Route
-
-load_dotenv()
 
 # Hosts that serve AdSense / Google Ads creatives, including the full-screen
 # "google_vignette" overlay that intercepts pointer events during clicks.

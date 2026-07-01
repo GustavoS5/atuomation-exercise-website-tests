@@ -18,8 +18,6 @@ uv sync --dev
 uv run playwright install
 ```
 
-For account-based tests, copy `.env.example` to `.env` and fill in the optional credentials.
-
 ## Common Commands
 
 ```powershell
