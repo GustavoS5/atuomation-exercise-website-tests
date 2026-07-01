@@ -1,5 +1,8 @@
 # Automation Exercise Test Automation
 
+[![Tests](https://github.com/GustavoS5/automation-exercise-website-tests/actions/workflows/tests.yml/badge.svg)](https://github.com/GustavoS5/automation-exercise-website-tests/actions/workflows/tests.yml)
+[![Locust smoke](https://github.com/GustavoS5/automation-exercise-website-tests/actions/workflows/locust-smoke.yml/badge.svg)](https://github.com/GustavoS5/automation-exercise-website-tests/actions/workflows/locust-smoke.yml)
+
 Playwright Python test framework for [automationexercise.com](https://automationexercise.com/), covering browser flows and the public REST API with maintainable page objects, typed response validation, and CI-ready quality checks.
 
 ## What This Demonstrates
