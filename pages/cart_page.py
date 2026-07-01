@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from playwright.sync_api import Locator
+from playwright.sync_api import Locator, Page
 
 from pages.base_page import BasePage
 
@@ -12,21 +12,12 @@ class CartPage(BasePage):
 
     url = "/view_cart"
 
-    @property
-    def shopping_cart_breadcrumb(self) -> Locator:
-        return self.page.get_by_text("Shopping Cart", exact=True)
-
-    @property
-    def cart_table(self) -> Locator:
-        return self.page.locator("#cart_info_table")
-
-    @property
-    def cart_rows(self) -> Locator:
-        return self.cart_table.locator("tbody tr")
-
-    @property
-    def proceed_to_checkout_link(self) -> Locator:
-        return self.page.locator("a.check_out")
+    def __init__(self, page: Page) -> None:
+        super().__init__(page)
+        self.shopping_cart_breadcrumb = page.get_by_text("Shopping Cart", exact=True)
+        self.cart_table = page.locator("#cart_info_table")
+        self.cart_rows = self.cart_table.locator("tbody tr")
+        self.proceed_to_checkout_link = page.locator("a.check_out")
 
     def load(self) -> None:
         """Open the cart page."""
