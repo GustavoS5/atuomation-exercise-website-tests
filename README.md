@@ -8,8 +8,9 @@ Playwright Python test framework for [automationexercise.com](https://automation
 - API validation for all 14 documented Automation Exercise endpoints.
 - Pydantic models for response contracts and account form payloads.
 - Reusable pytest fixtures for browser pages, API contexts, test data, and cleanup.
+- Locust load profiles for read-only and stateful API behavior, including reports and thresholds.
 - Local quality gates with Ruff, mypy, pytest, and pre-commit.
-- GitHub Actions workflow for linting, type checking, and test execution.
+- GitHub Actions workflows for functional checks and manual Locust smoke validation.
 
 ## Setup
 
@@ -61,6 +62,68 @@ Account-mutating tests (create/update/delete/login) self-clean up via the
 `created_account` fixture, which deletes the test account in teardown even if a
 test assertion fails.
 
+## Load Testing With Locust
+
+Locust complements the pytest suite by repeatedly exercising API behavior with
+simulated users and reporting latency, throughput, percentiles, and failures.
+The load profile lives in `performance/locustfile.py`.
+
+Implemented Locust coverage:
+
+- `AutomationExerciseApiUser`: read-only product, brand, and search traffic.
+- `AutomationExerciseAccountUser`: stateful account flow with Faker-generated
+  users, per-user setup, login/profile/update tasks, and teardown cleanup.
+- Business-level validation using the API body's `responseCode`, not only the
+  HTTP status.
+- Shared JSON parsing failure handling so non-JSON responses are reported as
+  Locust failures.
+- Task tags for targeted runs: `browse`, `products`, `brands`, `search`,
+  `account`, `login`, `profile`, and `update`.
+- A gated `LearningLoadShape` enabled by `LOCUST_USE_SHAPE=1`.
+- Global and per-endpoint thresholds that set the Locust process exit code.
+
+Because this targets a public demo site, all committed examples use small
+load profiles.
+
+### Interactive Runs
+
+```powershell
+# Open the Locust web UI at http://localhost:8089
+uv run locust -f performance/locustfile.py -H https://automationexercise.com
+```
+
+### Repeatable Local Scripts
+
+```powershell
+# Read-only API baseline with CSV/HTML reports
+.\scripts\locust_api_baseline.ps1
+
+# Search-only baseline using Locust tags
+.\scripts\locust_search_baseline.ps1
+
+# Small stateful account smoke run
+.\scripts\locust_account_smoke.ps1
+
+# Read-only API run using the custom load shape
+.\scripts\locust_api_shape.ps1
+```
+
+Generated CSV and HTML reports are written under `reports/locust/`, which is
+ignored by git.
+
+### Thresholds
+
+Locust runs fail by exit code when the configured thresholds are exceeded:
+
+- aggregate failure ratio must remain `0%`
+- aggregate average response time must stay at or below `1000 ms`
+- aggregate p95 response time must stay at or below `2500 ms`
+- selected endpoint p95 thresholds are checked individually, for example
+  product/brand/search read paths and account login/profile/update paths
+
+Skipped endpoints are ignored, so tag-filtered runs do not fail because an
+unselected task did not execute.
+
 ## Quality Checks And CI
 
 ```powershell
@@ -72,9 +135,14 @@ uv run pytest
 
 The GitHub Actions workflow in `.github/workflows/tests.yml` runs the same checks on pushes and pull requests. It installs dependencies with `uv`, installs Playwright browsers, uploads Playwright failure artifacts when available, and keeps the commands aligned with local development.
 
+The manual `.github/workflows/locust-smoke.yml` workflow runs a tiny read-only
+Locust smoke check and uploads the generated Locust CSV/HTML report artifacts.
+
 ## Structure
 
 - `pages/`: page objects and reusable UI components
 - `tests/`: pytest test modules and test-level fixtures
+- `performance/locustfile.py`: Locust users, tags, load shape, and thresholds
+- `scripts/`: repeatable local PowerShell commands for Locust runs
 - `conftest.py`: project-wide fixtures and environment loading
 - `tests/api/api_models.py`: Pydantic contracts for API responses and account payloads

@@ -19,6 +19,9 @@ playwright-report/
 allure-results/
 allure-report/
 
+#Locust reports
+reports/
+
 # Local working notes
 docs/
 tmp/
