@@ -139,7 +139,7 @@ class AccountPayload(BaseModel):
     API failure during a test.
     """
 
-    model_config = ConfigDict(extra="forbid", populate_by_name=True)
+    model_config = ConfigDict(extra="forbid")
 
     name: str
     email: str
