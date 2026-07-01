@@ -11,34 +11,31 @@ from pages.signup_login_page import SignupLoginPage
 from playwright.sync_api import Page, expect
 
 from tests.helpers import (
+    AccountData,
     create_account_and_continue,
     delete_current_account,
-    make_account_data,
 )
 
 
 @pytest.mark.e2e
-def test_register_user(page: Page, faker: Faker) -> None:
+def test_register_user(page: Page, ui_account: AccountData) -> None:
     """A new user can register and delete the account."""
-    account = make_account_data(faker)
-
-    create_account_and_continue(page, account)
+    create_account_and_continue(page, ui_account)
 
     delete_current_account(page)
 
 
 @pytest.mark.e2e
-def test_login_user_with_valid_credentials(page: Page, faker: Faker) -> None:
+def test_login_user_with_valid_credentials(page: Page, ui_account: AccountData) -> None:
     """A registered user can log in with valid credentials."""
-    account = make_account_data(faker)
-    home_page = create_account_and_continue(page, account)
+    home_page = create_account_and_continue(page, ui_account)
     home_page.logout()
 
     signup_login_page = SignupLoginPage(page)
     expect(signup_login_page.login_heading).to_be_visible()
-    signup_login_page.login(email=account.email, password=account.password)
+    signup_login_page.login(email=ui_account.email, password=ui_account.password)
 
-    expect(HomePage(page).logged_in_as_link).to_contain_text(account.name)
+    expect(HomePage(page).logged_in_as_link).to_contain_text(ui_account.name)
     delete_current_account(page)
 
 
@@ -56,10 +53,9 @@ def test_login_rejects_invalid_credentials(
 
 
 @pytest.mark.e2e
-def test_logout_returns_user_to_login_page(page: Page, faker: Faker) -> None:
+def test_logout_returns_user_to_login_page(page: Page, ui_account: AccountData) -> None:
     """A logged-in user can log out and returns to the login page."""
-    account = make_account_data(faker)
-    home_page = create_account_and_continue(page, account)
+    home_page = create_account_and_continue(page, ui_account)
 
     home_page.logout()
 
@@ -67,21 +63,20 @@ def test_logout_returns_user_to_login_page(page: Page, faker: Faker) -> None:
     signup_login_page = SignupLoginPage(page)
     expect(signup_login_page.login_heading).to_be_visible()
 
-    signup_login_page.login(email=account.email, password=account.password)
+    signup_login_page.login(email=ui_account.email, password=ui_account.password)
     delete_current_account(page)
 
 
 @pytest.mark.negative
-def test_signup_rejects_existing_email(page: Page, faker: Faker) -> None:
+def test_signup_rejects_existing_email(page: Page, ui_account: AccountData) -> None:
     """The signup form rejects an email that already belongs to an account."""
-    account = make_account_data(faker)
-    home_page = create_account_and_continue(page, account)
+    home_page = create_account_and_continue(page, ui_account)
     home_page.logout()
 
     signup_login_page = SignupLoginPage(page)
-    signup_login_page.signup(name=account.name, email=account.email)
+    signup_login_page.signup(name=ui_account.name, email=ui_account.email)
 
     expect(signup_login_page.existing_email_message).to_be_visible()
 
-    signup_login_page.login(email=account.email, password=account.password)
+    signup_login_page.login(email=ui_account.email, password=ui_account.password)
     delete_current_account(page)
